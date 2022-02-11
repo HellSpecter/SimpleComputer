@@ -1,11 +1,22 @@
 #include "mySimpleComputer.h"
+#include "myTerm.h"
 
 mySC::mySC() {
     this->sc_regInit();
     this->sc_memoryInit();
 }
 
+int mySC::printAll() {
+    std::cout << std::hex;
+    mt_clearScreen();
+    mt_gotoXY(0, 0);
+    std::cout << "┌";
+
+    return 0;
+}
+
 void mySC::print() {
+    std::cout << std::hex;
     // рамка сверху
     std::cout << "┌";
     for (int i = 0; i < 10; i++) {
@@ -30,15 +41,22 @@ void mySC::print() {
         std::cout << "──────";
     }
     std::cout << "─┘\n";
+    std::cout << std::dec;
+
 
     // вывод флагов
+    mt_gotoXY(1, 65);
+    //mt_setForeground(WHITE);
     std::cout << "Names: O Z B C I\n";
+    mt_gotoXY(2, 65);
     std::cout << "Flags: " << ((flags >> OPERATION_OVERFLOW) & 0x1) << " "
                       << ((flags >> DIVISION_BY_ZERO) & 0x1) << " "
                       << ((flags >> OUT_OF_BOUNDS) & 0x1) << " "
                       << ((flags >> CLOCK_PULSE_IGNORE) & 0x1) << " "
                       << ((flags >> INVALID_COMMAND) & 0x1) << " ";
     std::cout << "\n\n";
+    mt_gotoXY(12, 65);
+    std::cout << std::dec;
 }
 
 int mySC::sc_memoryInit() {

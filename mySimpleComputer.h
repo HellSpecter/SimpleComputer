@@ -34,6 +34,7 @@ public:
 
     mySC();
 
+    int printAll();
     void print();
     int sc_memoryInit();
     int sc_memorySet(int address, int value);

@@ -1,4 +1,5 @@
 #include "mySimpleComputer.h"
+#include "myTerm.h"
 
 int main() {
     const char* filename = "new.txt";
@@ -13,7 +14,7 @@ int main() {
     //std::cout << "\nTest = " << *ptr << "\n";
     obj.print();
 
-    obj.sc_memorySet(2, 1);
+    obj.sc_memorySet(2, 15);
     obj.print();
     // тестим sc_memorySave, sc_memoryLoad
     obj.sc_memorySave(filename);
@@ -25,6 +26,7 @@ int main() {
     obj.sc_memoryLoad(filename);
     obj.print();
 
+    mt_clearScreen();
     // тестим sc_commandDecode
     std::cout << "\nTESTING sc_commandDecode:\n";
     auto* input = new int;
@@ -40,6 +42,9 @@ int main() {
     auto* output = new int;
     obj.sc_commandEncode(*decodedCommand, *decodedOperand, output);
     std::cout << "\nEncoded command+operand (decimal): " << std::dec << *output << "\n";
+
+    mt_clearScreen();
+    obj.print();
 
     return 0;
 }
