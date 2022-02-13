@@ -29,6 +29,7 @@
 *.lib
 
 # Executables
+main
 *.exe
 *.out
 *.app
@@ -135,3 +136,5 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
+### Additional
+/build
