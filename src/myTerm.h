@@ -5,8 +5,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-enum COLORS
-{
+enum COLORS {
     BLACK,
     RED,
     GREEN,
