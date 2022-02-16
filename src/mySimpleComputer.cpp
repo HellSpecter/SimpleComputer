@@ -1,5 +1,6 @@
 #include "mySimpleComputer.h"
 #include "myTerm.h"
+#include "myBigChars.h"
 
 mySC::mySC() {
     this->sc_regInit();
@@ -7,56 +8,82 @@ mySC::mySC() {
 }
 
 int mySC::printAll() {
-    std::cout << std::hex;
     mt_clearScreen();
-    mt_gotoXY(0, 0);
-    std::cout << "┌";
 
-    return 0;
-}
-
-void mySC::print() {
+    mt_setForeground(LIGHT_BLUE);
     std::cout << std::hex;
-    // рамка сверху
-    std::cout << "┌";
-    for (int i = 0; i < 10; i++) {
-        std::cout << "──────";
-        if (i == 3) {
-            std::cout << "Memory";
-            i += 1;
-        }
-    }
-    std::cout << "─┐\n│ ";
-    // вывод цифр из памяти
+    mt_gotoXY(2, 2);
     for(int i = 0; i < SIZE; i++) {
         if((i % 10 == 0) && (i != 0)) {
-            std::cout << "│\n│ ";
+            std::cout << "\n ";
         }
-
         std::cout << '+' << std::setw(4) << std::setfill('0') << ram[i] << ' ';
     }
-    // рамка снизу
-    std::cout << "│\n└";
-    for(int i = 0; i < 10; i++) {
-        std::cout << "──────";
-    }
-    std::cout << "─┘\n";
     std::cout << std::dec;
+    bc_box(1, 1, 10 * 6, 10);
 
+    bc_box(1, 63, 20, 1);
+    bc_box(4, 63, 20, 1);
+    bc_box(7, 63, 20, 1);
 
-    // вывод флагов
-    mt_gotoXY(1, 65);
-    //mt_setForeground(WHITE);
-    std::cout << "Names: O Z B C I\n";
-    mt_gotoXY(2, 65);
-    std::cout << "Flags: " << ((flags >> OPERATION_OVERFLOW) & 0x1) << " "
-                      << ((flags >> DIVISION_BY_ZERO) & 0x1) << " "
-                      << ((flags >> OUT_OF_BOUNDS) & 0x1) << " "
-                      << ((flags >> CLOCK_PULSE_IGNORE) & 0x1) << " "
-                      << ((flags >> INVALID_COMMAND) & 0x1) << " ";
-    std::cout << "\n\n";
-    mt_gotoXY(12, 65);
-    std::cout << std::dec;
+    // flags
+    mt_gotoXY(11, 69);
+    ((flags >> OPERATION_OVERFLOW) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
+    std::cout << "O ";
+    ((flags >> DIVISION_BY_ZERO) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
+    std::cout << "Z ";
+    ((flags >> OUT_OF_BOUNDS) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
+    std::cout << "B ";
+    ((flags >> CLOCK_PULSE_IGNORE) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
+    std::cout << "C ";
+    ((flags >> INVALID_COMMAND) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
+    std::cout << "I ";
+    mt_setForeground(WHITE);
+    bc_box(10, 63, 20, 1);
+
+    // big chars
+    bc_box(13, 1, 45, 8);
+    bc_printBigChar(PLUS, 14, 2, BLACK, LIGHT_BLUE);
+    bc_printBigChar(ZERO, 14, 11, BLACK, LIGHT_BLUE);
+    bc_printBigChar(ZERO, 14, 20, BLACK, LIGHT_BLUE);
+    bc_printBigChar(ZERO, 14, 29, BLACK, LIGHT_BLUE);
+    bc_printBigChar(ZERO, 14, 38, BLACK, LIGHT_BLUE);
+
+    // info
+    mt_setForeground(LIGHT_BLUE);
+    mt_gotoXY(14, 50);
+    std::cout << "l == load";
+    mt_gotoXY(15, 50);
+    std::cout << "s == save";
+    mt_gotoXY(16, 50);
+    std::cout << "r == run";
+    mt_gotoXY(17, 50);
+    std::cout << "t == step";
+    mt_gotoXY(18, 50);
+    std::cout << "i == reset";
+    mt_gotoXY(19, 50);
+    std::cout << "F5 == accumulator";
+    mt_gotoXY(20, 50);
+    std::cout << "F6 == instructionCounter";
+    bc_box(13, 48, 35, 8);
+
+    // names
+    mt_setForeground(BLUE);
+    mt_gotoXY(1, 25);
+    std::cout << " Memory ";
+    mt_gotoXY(1, 67);
+    std::cout << " Accumulator ";
+    mt_gotoXY(4, 64);
+    std::cout << " instructionCounter ";
+    mt_gotoXY(7, 68);
+    std::cout << " Operation ";
+    mt_gotoXY(10, 70);
+    std::cout << " Flags ";
+    mt_gotoXY(13, 60);
+    std::cout << " Keyboard ";
+
+    std::cout << "\n\n\n\n\n\n\n\n\n\n\n";
+    return 0;
 }
 
 int mySC::sc_memoryInit() {
@@ -66,7 +93,6 @@ int mySC::sc_memoryInit() {
 
 int mySC::sc_memorySet(int address, int value) {
     if ((address < 0) || (address >= SIZE)) {
-        //cout << "\nустанавливается флаг «выход за границы памяти»\n";
         this->sc_regSet(OUT_OF_BOUNDS, true);
         return 1;
     }
@@ -76,7 +102,6 @@ int mySC::sc_memorySet(int address, int value) {
 
 int mySC::sc_memoryGet(int address, int* value) {
     if ((address < 0) || (address >= SIZE)) {
-        //cout << "\nустанавливается флаг «выход за границы памяти»\n";
         this->sc_regSet(OUT_OF_BOUNDS, true);
         return 1;
     }
@@ -85,14 +110,6 @@ int mySC::sc_memoryGet(int address, int* value) {
 }
 
 int mySC::sc_memorySave(const char* filename) {
-    //FILE* ptrFile = fopen(filename, "wb");
-    //fwrite(ram, sizeof(int), SIZE, ptrFile);
-    //fclose(ptrFile);
-    //std::ofstream outfile("memory.txt", std::ofstream::binary);
-    //outfile.write(ram, sizeof(int) * SIZE);
-    //std::string command = "touch ";
-    //printf(command,"touch %s", filename); sprintf("touch ", "%s", filename)
-    //system(command);
     int fileDescriptor = open(filename, O_WRONLY);
     write(fileDescriptor, ram, sizeof(int) * SIZE);
     close(fileDescriptor);
@@ -100,9 +117,6 @@ int mySC::sc_memorySave(const char* filename) {
 }
 
 int mySC::sc_memoryLoad(const char* filename) {
-    //FILE* ptrFile = fopen(filename, "rb");
-    //fread(ram, sizeof(int), SIZE, ptrFile);
-    //fclose(ptrFile);
     int fileDescriptor = open(filename, O_RDONLY);
     read(fileDescriptor, ram, sizeof(int) * SIZE);
     close(fileDescriptor);
@@ -145,7 +159,6 @@ int mySC::sc_commandEncode(int command, int operand, int* value) {
             return 0;
         } else {
             this->sc_regSet(INVALID_COMMAND, true);
-            //std::cout << "\nфлаг неверная команда\n";
             return -1;
         }
     } else {
@@ -164,13 +177,11 @@ int mySC::sc_commandDecode(int* command, int* operand, int value) {
             return 0;
         } else {
             this->sc_regSet(INVALID_COMMAND, true);
-            //std::cout << "\nфлаг неверная команда\n";
             return -1;
         }
     }
     else {
         this->sc_regSet(INVALID_COMMAND, true);
-        //std::cout << "\nфлаг неверная команда\n";
         return -1;
     }
 }
