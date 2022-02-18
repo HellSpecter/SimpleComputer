@@ -5,9 +5,10 @@
 mySC::mySC() {
     this->sc_regInit();
     this->sc_memoryInit();
+    this->instructionCounter = 0;
 }
 
-int mySC::printAll() {
+int mySC::printAll(int currentIndex) {
     mt_clearScreen();
 
     mt_setForeground(LIGHT_BLUE);
@@ -17,7 +18,11 @@ int mySC::printAll() {
         if((i % 10 == 0) && (i != 0)) {
             std::cout << "\n ";
         }
+        if(i == currentIndex) {
+            mt_setForeground(YELLOW);
+        }
         std::cout << '+' << std::setw(4) << std::setfill('0') << ram[i] << ' ';
+        mt_setForeground(LIGHT_BLUE);
     }
     std::cout << std::dec;
     bc_box(1, 1, 10 * 6, 10);
@@ -48,6 +53,16 @@ int mySC::printAll() {
     bc_printBigChar(ZERO, 14, 20, BLACK, LIGHT_BLUE);
     bc_printBigChar(ZERO, 14, 29, BLACK, LIGHT_BLUE);
     bc_printBigChar(ZERO, 14, 38, BLACK, LIGHT_BLUE);
+    int valueToPrint = 0;
+    sc_memoryGet(instructionCounter, &valueToPrint);
+    bc_printBigChar((BIGCHARS)((valueToPrint >> 12 ) & 0b1111), 14, 11, BLACK, LIGHT_BLUE);
+    //valueToPrint %= 1000;
+    bc_printBigChar((BIGCHARS)((valueToPrint >> 8 ) & 0b1111), 14, 20, BLACK, LIGHT_BLUE);
+    //valueToPrint %= 100;
+    bc_printBigChar((BIGCHARS)((valueToPrint >> 4 ) & 0b1111), 14, 29, BLACK, LIGHT_BLUE);
+    //valueToPrint %= 10;
+    bc_printBigChar((BIGCHARS)((valueToPrint) & 0b1111), 14, 38, BLACK, LIGHT_BLUE);
+
 
     // info
     mt_setForeground(LIGHT_BLUE);
@@ -72,9 +87,19 @@ int mySC::printAll() {
     mt_gotoXY(1, 25);
     std::cout << " Memory ";
     mt_gotoXY(1, 67);
+    // accumulator
     std::cout << " Accumulator ";
+    mt_gotoXY(2, 71);
+    mt_setForeground(LIGHT_BLUE);
+    std::cout << '+' << std::hex << std::setw(4) << std::setfill('0') << ram[currentIndex] << std::dec;
+    mt_setForeground(BLUE);
+    // instructionCounter
     mt_gotoXY(4, 64);
     std::cout << " instructionCounter ";
+    mt_gotoXY(5, 71);
+    mt_setForeground(LIGHT_BLUE);
+    std::cout << '+' << std::hex << std::setw(4) << std::setfill('0') << instructionCounter << std::dec;
+    mt_setForeground(BLUE);
     mt_gotoXY(7, 68);
     std::cout << " Operation ";
     mt_gotoXY(10, 70);
