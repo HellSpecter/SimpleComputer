@@ -3,8 +3,9 @@
 
 #include <termios.h>
 #include <cstdio>
+#include <cstring>
 //#include <fcntl.h>
-//#include <unistd.h>
+#include <unistd.h>
 
 
 enum KEYS {
@@ -23,7 +24,7 @@ enum KEYS {
     closeApp,
 };
 
-int rk_readKey(KEYS *key);
+int rk_readKey(KEYS &key);
 int rk_myTermSave();
 int rk_myTermRestore();
 int rk_myTermRegime(bool setCanonRegime, bool setEcho, bool setSigint, int vtime, int vmin);
