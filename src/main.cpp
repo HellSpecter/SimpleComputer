@@ -2,6 +2,8 @@
 #include "myTerm.h"
 #include "myReadKey.h"
 
+
+
 int mainLogic() {
     const char* filename = "new.txt";
     system("touch new.txt");
@@ -41,9 +43,12 @@ int mainLogic() {
                 //std::cout << "F5";
                 int value;
                 mt_setForeground(YELLOW);
-                mt_gotoXY(2, 71);
-                std::cout << '+';
+
+                mt_gotoXY(24, 2);
+                std::cout << "Input: ";
+
                 std::cin >> std::hex >> value;
+                value &= 0b111111111111111;
                 std::cin >> std::dec;
                 mt_setForeground(BLUE);
                 obj.sc_memorySet(currentIndex, value);
