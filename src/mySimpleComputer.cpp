@@ -21,7 +21,11 @@ int mySC::printAll(int currentIndex) {
         if(i == currentIndex) {
             mt_setForeground(YELLOW);
         }
-        std::cout << '+' << std::setw(4) << std::setfill('0') << ram[i] << ' ';
+        if (((ram[i] >> 14) & 1) == 0)
+            std::cout << '+';
+        else
+            std::cout << '-';
+        std::cout << std::setw(4) << std::setfill('0') << ram[i] << ' ';
         mt_setForeground(LIGHT_BLUE);
     }
     std::cout << std::dec;
@@ -55,6 +59,10 @@ int mySC::printAll(int currentIndex) {
     bc_printBigChar(ZERO, 14, 38, BLACK, LIGHT_BLUE);
     int valueToPrint = 0;
     sc_memoryGet(instructionCounter, &valueToPrint);
+    if (((valueToPrint >> 14) & 1) == 0)
+        bc_printBigChar(PLUS, 14, 2, BLACK, LIGHT_BLUE);
+    else
+        bc_printBigChar(MINUS, 14, 2, BLACK, LIGHT_BLUE);
     bc_printBigChar((BIGCHARS)((valueToPrint >> 12 ) & 0b1111), 14, 11, BLACK, LIGHT_BLUE);
     //valueToPrint %= 1000;
     bc_printBigChar((BIGCHARS)((valueToPrint >> 8 ) & 0b1111), 14, 20, BLACK, LIGHT_BLUE);
@@ -91,7 +99,11 @@ int mySC::printAll(int currentIndex) {
     std::cout << " Accumulator ";
     mt_gotoXY(2, 71);
     mt_setForeground(LIGHT_BLUE);
-    std::cout << '+' << std::hex << std::setw(4) << std::setfill('0') << ram[currentIndex] << std::dec;
+    if (((ram[currentIndex]>> 14) & 1) == 0)
+        std::cout << '+';
+    else
+        std::cout << '-';
+    std::cout << std::hex << std::setw(4) << std::setfill('0') << ram[currentIndex] << std::dec;
     mt_setForeground(BLUE);
     // instructionCounter
     mt_gotoXY(4, 64);
@@ -108,6 +120,7 @@ int mySC::printAll(int currentIndex) {
     std::cout << " Keyboard ";
 
     std::cout << "\n\n\n\n\n\n\n\n\n\n\n";
+    mt_gotoXY(24, 1);
     return 0;
 }
 
