@@ -1,127 +1,9 @@
 #include "mySimpleComputer.h"
 #include "myTerm.h"
-#include "myBigChars.h"
 
 mySC::mySC() {
     this->sc_regInit();
     this->sc_memoryInit();
-    this->instructionCounter = 0;
-}
-
-int mySC::printAll(int currentIndex) {
-    mt_clearScreen();
-
-    mt_setForeground(LIGHT_BLUE);
-    std::cout << std::hex;
-    mt_gotoXY(2, 2);
-    for(int i = 0; i < SIZE; i++) {
-        if((i % 10 == 0) && (i != 0)) {
-            std::cout << "\n ";
-        }
-        if(i == currentIndex) {
-            mt_setForeground(YELLOW);
-        }
-        if (((ram[i] >> 14) & 1) == 0)
-            std::cout << '+';
-        else
-            std::cout << '-';
-        std::cout << std::setw(4) << std::setfill('0') << ram[i] << ' ';
-        mt_setForeground(LIGHT_BLUE);
-    }
-    std::cout << std::dec;
-    bc_box(1, 1, 10 * 6, 10);
-
-    bc_box(1, 63, 20, 1);
-    bc_box(4, 63, 20, 1);
-    bc_box(7, 63, 20, 1);
-
-    // flags
-    mt_gotoXY(11, 69);
-    ((flags >> OPERATION_OVERFLOW) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
-    std::cout << "O ";
-    ((flags >> DIVISION_BY_ZERO) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
-    std::cout << "Z ";
-    ((flags >> OUT_OF_BOUNDS) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
-    std::cout << "B ";
-    ((flags >> CLOCK_PULSE_IGNORE) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
-    std::cout << "C ";
-    ((flags >> INVALID_COMMAND) & 0x1) == 1 ? mt_setForeground(RED) : mt_setForeground(GREEN);
-    std::cout << "I ";
-    mt_setForeground(WHITE);
-    bc_box(10, 63, 20, 1);
-
-    // big chars
-    bc_box(13, 1, 45, 8);
-    bc_printBigChar(PLUS, 14, 2, BLACK, LIGHT_BLUE);
-    bc_printBigChar(ZERO, 14, 11, BLACK, LIGHT_BLUE);
-    bc_printBigChar(ZERO, 14, 20, BLACK, LIGHT_BLUE);
-    bc_printBigChar(ZERO, 14, 29, BLACK, LIGHT_BLUE);
-    bc_printBigChar(ZERO, 14, 38, BLACK, LIGHT_BLUE);
-    int valueToPrint = 0;
-    sc_memoryGet(instructionCounter, &valueToPrint);
-    if (((valueToPrint >> 14) & 1) == 0)
-        bc_printBigChar(PLUS, 14, 2, BLACK, LIGHT_BLUE);
-    else
-        bc_printBigChar(MINUS, 14, 2, BLACK, LIGHT_BLUE);
-    bc_printBigChar((BIGCHARS)((valueToPrint >> 12 ) & 0b1111), 14, 11, BLACK, LIGHT_BLUE);
-    //valueToPrint %= 1000;
-    bc_printBigChar((BIGCHARS)((valueToPrint >> 8 ) & 0b1111), 14, 20, BLACK, LIGHT_BLUE);
-    //valueToPrint %= 100;
-    bc_printBigChar((BIGCHARS)((valueToPrint >> 4 ) & 0b1111), 14, 29, BLACK, LIGHT_BLUE);
-    //valueToPrint %= 10;
-    bc_printBigChar((BIGCHARS)((valueToPrint) & 0b1111), 14, 38, BLACK, LIGHT_BLUE);
-
-
-    // info
-    mt_setForeground(LIGHT_BLUE);
-    mt_gotoXY(14, 50);
-    std::cout << "l == load";
-    mt_gotoXY(15, 50);
-    std::cout << "s == save";
-    mt_gotoXY(16, 50);
-    std::cout << "r == run";
-    mt_gotoXY(17, 50);
-    std::cout << "t == step";
-    mt_gotoXY(18, 50);
-    std::cout << "i == reset";
-    mt_gotoXY(19, 50);
-    std::cout << "F5 == accumulator";
-    mt_gotoXY(20, 50);
-    std::cout << "F6 == instructionCounter";
-    bc_box(13, 48, 35, 8);
-
-    // names
-    mt_setForeground(BLUE);
-    mt_gotoXY(1, 25);
-    std::cout << " Memory ";
-    mt_gotoXY(1, 67);
-    // accumulator
-    std::cout << " Accumulator ";
-    mt_gotoXY(2, 71);
-    mt_setForeground(LIGHT_BLUE);
-    if (((ram[currentIndex]>> 14) & 1) == 0)
-        std::cout << '+';
-    else
-        std::cout << '-';
-    std::cout << std::hex << std::setw(4) << std::setfill('0') << ram[currentIndex] << std::dec;
-    mt_setForeground(BLUE);
-    // instructionCounter
-    mt_gotoXY(4, 64);
-    std::cout << " instructionCounter ";
-    mt_gotoXY(5, 71);
-    mt_setForeground(LIGHT_BLUE);
-    std::cout << '+' << std::hex << std::setw(4) << std::setfill('0') << instructionCounter << std::dec;
-    mt_setForeground(BLUE);
-    mt_gotoXY(7, 68);
-    std::cout << " Operation ";
-    mt_gotoXY(10, 70);
-    std::cout << " Flags ";
-    mt_gotoXY(13, 60);
-    std::cout << " Keyboard ";
-
-    std::cout << "\n\n\n\n\n\n\n\n\n\n\n";
-    mt_gotoXY(24, 1);
-    return 0;
 }
 
 int mySC::sc_memoryInit() {
@@ -223,4 +105,3 @@ int mySC::sc_commandDecode(int* command, int* operand, int value) {
         return -1;
     }
 }
-
