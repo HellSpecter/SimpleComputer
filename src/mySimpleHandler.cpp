@@ -31,9 +31,10 @@ void sh_run() {
     myHandler.computer.sc_regSet(CLOCK_PULSE_IGNORE, false);
     KEYS key = none;
     //signal(SIGALRM, signalHandler);                ///////////////signal_handler
-    unsigned int tempFlag;
+    unsigned int tempFlag, tempFlag1;
     myHandler.computer.sc_regGet(CLOCK_PULSE_IGNORE, &tempFlag);
-    while(tempFlag == 0) {
+    myHandler.computer.sc_regGet(OUT_OF_BOUNDS, &tempFlag1);
+    while(tempFlag == 0 && tempFlag1 == 0) {
         mt_clearScreen();
         printAll();
         myHandler.currentIndex = myHandler.instructionCounter;
@@ -44,10 +45,13 @@ void sh_run() {
         printAll();
         if(myHandler.instructionCounter >= 99 || key == KEYS::reset) {
             //sh_reset();
+
             raise(SIGUSR1);
+            break;
             //myHandler.computer.sc_regSet(CLOCK_PULSE_IGNORE, true);
         }
         myHandler.computer.sc_regGet(CLOCK_PULSE_IGNORE, &tempFlag);
+        myHandler.computer.sc_regGet(OUT_OF_BOUNDS, &tempFlag1);
         fflush(stdout);
     }
 
@@ -69,12 +73,16 @@ void signalReset(int signal) {
 }
 
 void signalHandler(int signal) {
-    unsigned int value;
+    unsigned int value, value1;
     myHandler.computer.sc_regGet(CLOCK_PULSE_IGNORE, &value);
-    if(value == 0) {
+    myHandler.computer.sc_regGet(OUT_OF_BOUNDS, &value1);
+    if(value == 0 && value1 == 0) {
         myHandler.instructionCounter++;
         myHandler.currentIndex = myHandler.instructionCounter;
         mt_clearScreen();
+        printAll();
+    } else if (value1 == 1){
+        sh_reset();
         printAll();
     }
 }
